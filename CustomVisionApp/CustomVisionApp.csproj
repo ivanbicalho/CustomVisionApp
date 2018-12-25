@@ -17,6 +17,21 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -100,10 +115,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\ImageHelper.cs" />
-    <Compile Include="Models\LocalCustomVisionClient.cs" />
-    <Compile Include="StreetFighter\ExecuteAfter.cs" />
-    <Compile Include="StreetFighter\SpecialAtacks.cs" />
+    <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Main\LocalCustomVisionClient.cs" />
+    <Compile Include="StreetFighter\Attacks.cs" />
+    <Compile Include="StreetFighter\ExecuteWhen.cs" />
+    <Compile Include="StreetFighter\SpecialAttacks.cs" />
     <Compile Include="TensorFlow\ImageUtil.cs" />
     <Compile Include="TensorFlow\Result.cs" />
     <Compile Include="TensorFlow\TensorFlowEngine.cs" />
@@ -121,9 +137,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\CustomVisionClient.cs" />
-    <Compile Include="Models\MyCamera.cs" />
-    <Compile Include="Models\VisionClient.cs" />
+    <Compile Include="Main\MyCamera.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -141,13 +155,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Assets\70bc8939-75f0-417c-ba86-06fdf03b46df\model.pb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\a71c971b-c791-479b-b8ad-54e431197bad\model.pb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -156,16 +166,17 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Assets\a71c971b-c791-479b-b8ad-54e431197bad\labels.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\70bc8939-75f0-417c-ba86-06fdf03b46df\labels.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -176,4 +187,11 @@
     <Error Condition="!Exists('..\packages\TensorFlowSharp.1.11.0\build\net45\TensorFlowSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\TensorFlowSharp.1.11.0\build\net45\TensorFlowSharp.targets'))" />
   </Target>
   <Import Project="..\packages\TensorFlowSharp.1.11.0\build\net45\TensorFlowSharp.targets" Condition="Exists('..\packages\TensorFlowSharp.1.11.0\build\net45\TensorFlowSharp.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /e /y /i /d $(ProjectDir)Modelo $(TargetDir)Modelo</PreBuildEvent>
+  </PropertyGroup>
 </Project>

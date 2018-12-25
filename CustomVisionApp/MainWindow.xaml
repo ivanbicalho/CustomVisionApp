@@ -7,48 +7,30 @@
         mc:Ignorable="d"
         x:Name="TheWindow"
         Title="Azure Vision" 
-        Height="480" 
-        Width="650">
+        Height="600" 
+        Width="560">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
             <RowDefinition />
-            <RowDefinition Height="120" />
+            <RowDefinition Height="145" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="120" />
         </Grid.ColumnDefinitions>
-        <Border BorderThickness="1" BorderBrush="Black">
+        <Button x:Name="bStartStop" Content="Start" CommandParameter="Start" Background="DarkSeaGreen" FontWeight="Bold" FontSize="16px" Margin="50, 5, 50, 5" Click="BStartStop_Click" />
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1">
             <Image x:Name="TheImage" />
         </Border>
-        <StackPanel Grid.Column="1" Margin="6,0,6,0">
-            <Label FontWeight="Bold">Vision Service</Label>
-            <RadioButton GroupName="ServiceType" x:Name="ServiceGeneric" IsChecked="True" Content="Generic" Margin="3, 0, 0, 0" />
-            <RadioButton GroupName="ServiceType" x:Name="ServiceCustom" Content="Custom" Margin="3, 0, 0, 0" />
-            <RadioButton GroupName="ServiceType" x:Name="ServiceLocal" Content="Local Custom" Margin="3, 0, 0, 0" />
-
-            <Button x:Name="bStart" Content="Start" Margin="5, 20, 0, 0" Click="BStart_Click" />
-            <Button x:Name="bLoad" Content="Load" Margin="5, 6, 0, 0" Click="BLoad_Click" />
-            <Button x:Name="bSave" Content="Save Image" Margin="5, 6, 0, 0" Click="BSave_Click"/>
-
-            <Button x:Name="bDescribe" Content="Go!" Margin="5, 20, 0, 0" Height="80" Click="BDescribe_Click" />
-        </StackPanel>
-        <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1">
-            <Grid Margin="10" >
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Row="2">
+            <Grid Margin="4" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Text="Description" FontWeight="Bold" FontSize="14" />
-                <ScrollViewer Grid.Row="1">
-                    <TextBlock x:Name="Description" Text=""  FontSize="14" TextWrapping="Wrap" />
-                </ScrollViewer>
+                <TextBlock Text="Output" FontWeight="Bold" FontSize="14" />
+                <TextBox Name="Output" Text="" IsReadOnly="True" Grid.Row="1" VerticalScrollBarVisibility="Visible"></TextBox>
             </Grid>
         </Border>
-        <StackPanel Grid.Row="1" Grid.Column="1"  Margin="6,0,6,0">
-            <Label FontWeight="Bold">Vision Project</Label>
-            <RadioButton GroupName="Project" x:Name="Bolacha" IsChecked="True" Content="Bolacha" Margin="3, 0, 0, 0" Checked="Bolacha_Checked" />
-            <RadioButton GroupName="Project" x:Name="Hadouken" Content="Hadouken" Margin="3, 0, 0, 0" Checked="Hadouken_Checked" />
-        </StackPanel>
     </Grid>
 </Window>

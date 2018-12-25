@@ -1,19 +1,23 @@
 ﻿using System.IO;
 using TensorFlow;
 
-namespace CustomVisionApp.TensorFlow {
+namespace CustomVisionApp.TensorFlow
+{
     // Taken and adapted from: https://github.com/migueldeicaza/TensorFlowSharp/blob/master/Examples/ExampleCommon/ImageUtil.cs
-    public static class ImageUtil {
-
+    public static class ImageUtil
+    {
         public static TFTensor CreateTensorFromImage(byte[] image,
-                                                   TFDataType destinationDataType = TFDataType.Float) {
+                                                   TFDataType destinationDataType = TFDataType.Float)
+        {
             // DecodeJpeg uses a scalar String-valued tensor as input.
             var tensor = TFTensor.CreateString(image);
 
             // Construct a graph to normalize the image
-            using (var graph = ConstructGraphToNormalizeImage(out TFOutput input, out TFOutput output, destinationDataType)) {
+            using (var graph = ConstructGraphToNormalizeImage(out TFOutput input, out TFOutput output, destinationDataType))
+            {
                 // Execute that graph to normalize this one image
-                using (var session = new TFSession(graph)) {
+                using (var session = new TFSession(graph))
+                {
                     var normalized = session.Run(
                         inputs: new[] { input },
                         inputValues: new[] { tensor },
@@ -23,8 +27,10 @@ namespace CustomVisionApp.TensorFlow {
                 }
             }
         }
+
         // Convert the image in filename to a Tensor suitable as input to the Inception model.
-        public static TFTensor CreateTensorFromImageFile(string file, TFDataType destinationDataType = TFDataType.Float) {
+        public static TFTensor CreateTensorFromImageFile(string file, TFDataType destinationDataType = TFDataType.Float)
+        {
             return CreateTensorFromImage(File.ReadAllBytes(file));
         }
 
@@ -32,7 +38,8 @@ namespace CustomVisionApp.TensorFlow {
         // Python: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/label_image/label_image.py
         // C++: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/label_image/main.cc
         // Java: https://github.com/Azure-Samples/cognitive-services-android-customvision-sample/blob/master/app/src/main/java/demo/tensorflow/org/customvision_sample/MSCognitiveServicesClassifier.java
-        private static TFGraph ConstructGraphToNormalizeImage(out TFOutput input, out TFOutput output, TFDataType destinationDataType = TFDataType.Float) {
+        private static TFGraph ConstructGraphToNormalizeImage(out TFOutput input, out TFOutput output, TFDataType destinationDataType = TFDataType.Float)
+        {
             const int W = 227;
             const int H = 227;
             const float Scale = 1;

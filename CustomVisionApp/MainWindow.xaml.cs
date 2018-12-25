@@ -1,4 +1,5 @@
-﻿using CustomVisionApp.Models;
+﻿using CustomVisionApp.Helpers;
+using CustomVisionApp.Main;
 using CustomVisionApp.StreetFighter;
 using Microsoft.Win32;
 using OpenCvSharp;
@@ -8,109 +9,88 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace CustomVisionApp {
-    public partial class MainWindow : System.Windows.Window {
+namespace CustomVisionApp
+{
+    public partial class MainWindow : System.Windows.Window
+    {
+        private const string START = "Start";
+        private const string STOP = "Stop";
 
-        private const string _projectIdBolacha = "70bc8939-75f0-417c-ba86-06fdf03b46df";
-        private const string _projectIdHadouken = "a71c971b-c791-479b-b8ad-54e431197bad";
-
+        private int _countEvent;
+        private LocalCustomVisionClient _customVisison;
         private MyCamera _camera;
-        private VisionClient _visionClient;
-        private CustomVisionClient _customVisionClient;
-        private LocalCustomVisionClient _localCustomVisionClient;
-        private BitmapImage _currentImage;
-        private string _currentProjectId;
-        
-        public MainWindow() {
+
+        public MainWindow()
+        {
             InitializeComponent();
-            var url = "https://brazilsouth.api.cognitive.microsoft.com";
-            var token = Environment.GetEnvironmentVariable("AZURE-COGNITIVESERVICES-TOKEN", EnvironmentVariableTarget.User);
-            var predictionToken = Environment.GetEnvironmentVariable("AZURE-CUSTOMVISION-PREDICTION-TOKEN", EnvironmentVariableTarget.User);
-            
-            _visionClient = new VisionClient(token, url);
-            _customVisionClient = new CustomVisionClient(predictionToken);
-            _localCustomVisionClient = new LocalCustomVisionClient();
-            _currentProjectId = _projectIdBolacha;
+            _customVisison = new LocalCustomVisionClient();
         }
 
-        private void BStart_Click(object sender, RoutedEventArgs e) {
-            if(bStart.Content.Equals("Start")) {
-                _camera = new MyCamera();
-                _camera.NewImage = NewImage;
-                bStart.Content = "Stop";
-                bLoad.IsEnabled = false;
-                Task.Factory.StartNew(() => _camera.StartCamera(0));
+        private void BStartStop_Click(object sender, RoutedEventArgs e)
+        {
+            if (bStartStop.CommandParameter.Equals(START))
+            {
+                Start();
             }
-            else {
-                _camera.Dispose();
-                bStart.Content = "Start";
-                bLoad.IsEnabled = true;
+            else
+            {
+                Stop();
             }
         }
 
-        private void BLoad_Click(object sender, RoutedEventArgs e) {
-            var op = new OpenFileDialog {
-                Title = "Select a picture",
-                Filter = @"All supported graphics|*.jpg;*.jpeg;*.png|
-                         JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|
-                         Portable Network Graphic (*.png)|*.png"
-            };
-            if (op.ShowDialog() == true) {
-                _currentImage = new BitmapImage(new Uri(op.FileName));
-                TheImage.Source = _currentImage;
-            }
+        private void Start()
+        {
+            _countEvent = 0;
+
+            _camera = new MyCamera();
+            _camera.OnNewImage += OnNewImage;
+
+            Task.Factory.StartNew(() => _camera.StartCamera(1000));
+
+            bStartStop.Content = STOP;
+            bStartStop.CommandParameter = STOP;
+            bStartStop.Background = Brushes.PaleVioletRed;
         }
 
-        private async void BDescribe_Click(object sender, RoutedEventArgs e) {
-            if(_currentImage == null) {
-                return;
-            }
-            var image = ImageHelper.ToImage(_currentImage);
+        private void Stop()
+        {
+            _camera.Dispose();
 
-            string description = "Analyze...";
-            Description.Text = description;
-            if (ServiceGeneric.IsChecked ?? false) {
-                description = await _visionClient.Analyze(image);
-            }
-            else if(ServiceCustom.IsChecked ?? false) {
-                description = await _customVisionClient.Analyze(image, _currentProjectId);
-            }
-            else if(ServiceLocal.IsChecked ?? false) {
-                description = await _localCustomVisionClient.Analyze(image, _currentProjectId);
-            }
-            Description.Text = description;
+            TheImage.Source = null;
+            Output.Text = string.Empty;
+
+            bStartStop.Content = START;
+            bStartStop.CommandParameter = START;
+            bStartStop.Background = Brushes.DarkSeaGreen;
         }
 
-        private void NewImage(Mat frame) {
+        private void OnNewImage(object sender, Mat frame)
+        {
             var bytes = frame.ToBytes(".png");
-            ChangeUI(() => {
-                _currentImage = ImageHelper.ToImage(bytes);
-                TheImage.Source = _currentImage;
-                TheWindow.Title = "Azure Vision: " + _camera.FramesPerSecond.ToString();                
+
+            ChangeUI(() =>
+            {
+                TheImage.Source = ImageHelper.ToImage(bytes);
+
+                var attack = _customVisison.Analyze(bytes).Result;
+                WriteOutput(attack);
+                ExecuteWhen.SameValueThreeTimes(attack, () => SpecialAttacks.Execute(attack));
             });
-
-            var result = _localCustomVisionClient.Analyze(bytes, _currentProjectId).Result;
-
-            //SpecialAtacks.Execute(result);
         }
 
-        private void ChangeUI(Action action) {
+        private void ChangeUI(Action action)
+        {
             Dispatcher.BeginInvoke(action);
         }
 
-        private void BSave_Click(object sender, RoutedEventArgs e) {
-            var bytes = ImageHelper.ToImage(_currentImage);
-            File.WriteAllBytes("image.jpg", bytes);
-        }
-
-        private void Bolacha_Checked(object sender, RoutedEventArgs e) {
-            _currentProjectId = _projectIdBolacha;
-        }
-
-        private void Hadouken_Checked(object sender, RoutedEventArgs e) {
-            _currentProjectId = _projectIdHadouken;
+        private void WriteOutput(string attack)
+        {
+            Output.Text += $"> {++_countEvent} - {attack}";
+            Output.Text += Environment.NewLine;
+            Output.ScrollToEnd();
         }
     }
 }
