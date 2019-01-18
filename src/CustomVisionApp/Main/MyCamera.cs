@@ -6,15 +6,15 @@ namespace CustomVisionApp.Main
 {
     public class MyCamera : IDisposable
     {
-        public EventHandler<Mat> OnNewImage;
+        public EventHandler<Mat> OnNewImage { get; set; }
         public double FramesPerSecond { get; private set; }
 
         private bool _running;
-        private object _sync = new object();
+        private readonly object _sync = new object();
         private VideoCapture _capture;
         private DateTime _lastFrame;
 
-        public async Task StartCamera(int delay = 0)
+        public async Task StartCameraAsync(int delay = 0)
         {
             _running = true;
             _capture = new VideoCapture(0);

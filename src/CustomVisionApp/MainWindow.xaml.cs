@@ -48,7 +48,7 @@ namespace CustomVisionApp
             _camera = new MyCamera();
             _camera.OnNewImage += OnNewImage;
 
-            Task.Factory.StartNew(() => _camera.StartCamera(1000));
+            Task.Factory.StartNew(() => _camera.StartCameraAsync(500));
 
             bStartStop.Content = STOP;
             bStartStop.CommandParameter = STOP;
@@ -75,7 +75,7 @@ namespace CustomVisionApp
             {
                 TheImage.Source = ImageHelper.ToImage(bytes);
 
-                var attack = _customVisison.Analyze(bytes).Result;
+                var attack = _customVisison.AnalyzeAsync(bytes).Result;
                 WriteOutput(attack);
                 ExecuteWhen.SameValueThreeTimes(attack, () => SpecialAttacks.Execute(attack));
             });

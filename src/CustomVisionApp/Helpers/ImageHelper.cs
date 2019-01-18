@@ -7,7 +7,10 @@ namespace CustomVisionApp.Helpers
     {
         public static BitmapImage ToImage(byte[] imageInBytes)
         {
-            return ToImage(new MemoryStream(imageInBytes));
+            using (var memoryStream = new MemoryStream(imageInBytes))
+            {
+                return ToImage(memoryStream);
+            }
         }
 
         public static BitmapImage ToImage(Stream stream)
@@ -24,7 +27,7 @@ namespace CustomVisionApp.Helpers
 
         public static byte[] ToImage(BitmapImage bitmapImage)
         {
-            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            var encoder = new JpegBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
             using (MemoryStream ms = new MemoryStream())
             {
