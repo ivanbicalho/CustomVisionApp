@@ -4,6 +4,7 @@ using CustomVisionApp.StreetFighter;
 using Microsoft.Win32;
 using OpenCvSharp;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -27,18 +28,15 @@ namespace CustomVisionApp
         {
             InitializeComponent();
             _customVisison = new LocalCustomVisionClient();
+            ShowOutput(Config.ShowOutput);
         }
 
         private void BStartStop_Click(object sender, RoutedEventArgs e)
         {
             if (bStartStop.CommandParameter.Equals(START))
-            {
                 Start();
-            }
             else
-            {
                 Stop();
-            }
         }
 
         private void Start()
@@ -77,7 +75,7 @@ namespace CustomVisionApp
 
                 var attack = _customVisison.AnalyzeAsync(bytes).Result;
                 WriteOutput(attack);
-                ExecuteWhen.SameValueThreeTimes(attack, () => SpecialAttacks.Execute(attack));
+                ExecuteWhen.SameValueTwoTimes(attack, () => SpecialAttacks.Execute(attack));
             });
         }
 
@@ -91,6 +89,16 @@ namespace CustomVisionApp
             Output.Text += $"> {++_countEvent} - {attack}";
             Output.Text += Environment.NewLine;
             Output.ScrollToEnd();
+        }
+
+        private void ShowOutput(bool show)
+        {
+            var outputRow = 2;
+
+            if (show)
+                MainGrid.RowDefinitions[outputRow].Height = new GridLength(145);
+            else
+                MainGrid.RowDefinitions[outputRow].Height = new GridLength(0);
         }
     }
 }

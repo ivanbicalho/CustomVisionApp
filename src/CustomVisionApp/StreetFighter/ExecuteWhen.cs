@@ -29,9 +29,9 @@ namespace CustomVisionApp.StreetFighter
             }
         }
 
-        public static void SameValueThreeTimes(string value, Action action)
+        public static void SameValueTwoTimes(string value, Action action)
         {
-            SameValueNTimes(3, value, action);
+            SameValueNTimes(2, value, action);
         }
     }
 }

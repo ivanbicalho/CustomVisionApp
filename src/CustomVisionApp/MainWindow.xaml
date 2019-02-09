@@ -9,7 +9,7 @@
         Title="Azure Vision" 
         Height="600" 
         Width="560">
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition />
