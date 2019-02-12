@@ -29,8 +29,20 @@ namespace CustomVisionApp.StreetFighter
                 .Press(VirtualKey.D)
                 .Wait(100)
                 .Release(VirtualKey.Right)
-                .Release(VirtualKey.D);
+                .Release(VirtualKey.D);                
         }
+
+        /*
+            keyboard.Press(VirtualKey.Down)
+                .Wait(100)
+                .Press(VirtualKey.Right)
+                .Wait(20)
+                .Release(VirtualKey.Down)
+                .Press(VirtualKey.D)
+                .Wait(100)
+                .Release(VirtualKey.Right)
+                .Release(VirtualKey.D);
+         */
 
         private static void Shoryuken()
         {
