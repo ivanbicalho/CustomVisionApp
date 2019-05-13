@@ -15,9 +15,8 @@ namespace CustomVisionApp.StreetFighter
         {
             if (_current != value)
             {
-                _count = 1;
+                _count = 0;
                 _current = value;
-                return;
             }
 
             _count++;
